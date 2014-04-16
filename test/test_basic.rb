@@ -1,7 +1,6 @@
-require File.expand_path('helper', File.dirname(__FILE__))
+require_relative 'helper'
 
 class TestRglpk < Test::Unit::TestCase
-
   def test_create
     assert_instance_of Rglpk::Problem, Rglpk::Problem.new
   end
@@ -24,7 +23,7 @@ class TestRglpk < Test::Unit::TestCase
     assert_equal Rglpk::GLP_MIN, p.obj.dir
     p.obj.dir = Rglpk::GLP_MAX
     assert_equal Rglpk::GLP_MAX, p.obj.dir
-    assert_raise(ArgumentError){p.obj.dir = 3}
+    assert_raise(ArgumentError) { p.obj.dir = 3 }
   end
 
   def test_add_row
@@ -107,7 +106,7 @@ class TestRglpk < Test::Unit::TestCase
   def test_set_row
     p = Rglpk::Problem.new
     p.add_rows(2)
-    assert_raise(RuntimeError){p.rows[1].set([1, 2])}
+    assert_raise(RuntimeError) { p.rows[1].set([1, 2]) }
     p.add_cols(2)
     p.rows[1].set([1, 2])
     assert_equal [1, 2], p.rows[1].get
@@ -116,7 +115,7 @@ class TestRglpk < Test::Unit::TestCase
   def test_set_col
     p = Rglpk::Problem.new
     p.add_cols(2)
-    assert_raise(RuntimeError){p.cols[1].set([1, 2])}
+    assert_raise(RuntimeError) { p.cols[1].set([1, 2]) }
     p.add_rows(2)
     p.cols[1].set([1, 2])
     assert_equal [1, 2], p.cols[1].get
@@ -165,15 +164,15 @@ class TestRglpk < Test::Unit::TestCase
 
   def test_row_get_by_name
     p = Rglpk::Problem.new
-    assert_raises(RuntimeError){ p.rows['test'] }
+    assert_raises(RuntimeError) { p.rows['test'] }
     p.add_cols(2)
     p.add_rows(2)
     p.set_matrix([1, 2, 3, 4])
-    assert_raises(ArgumentError){ p.rows['test'] }
+    assert_raises(ArgumentError) { p.rows['test'] }
     p.rows[0].name = 'test'
     assert_equal [1, 2], p.rows['test'].get
   end
-  
+
   def test_get_row_range
     p = Rglpk::Problem.new
     p.add_rows(5)
@@ -182,22 +181,22 @@ class TestRglpk < Test::Unit::TestCase
 
   def test_col_get_by_name
     p = Rglpk::Problem.new
-    assert_raises(RuntimeError){ p.cols['test'] }
+    assert_raises(RuntimeError) { p.cols['test'] }
     p.add_cols(2)
     p.add_rows(2)
     p.set_matrix([1, 2, 3, 4])
-    assert_raises(ArgumentError){ p.cols['test'] }
+    assert_raises(ArgumentError) { p.cols['test'] }
     p.cols[0].name = 'test'
     assert_equal [1, 3], p.cols['test'].get
   end
 
   def test_solve
     p = Rglpk::Problem.new
-    assert_raises(RuntimeError){ p.cols['test'] }
+    assert_raises(RuntimeError) { p.cols['test'] }
     p.add_cols(2)
     p.add_rows(2)
     p.set_matrix([1, 2, 3, 4])
-    p.simplex({:msg_lev => 1})
+    p.simplex(msg_lev: 1)
   end
 
   class D < Rglpk::Problem

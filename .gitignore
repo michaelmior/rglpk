@@ -14,7 +14,8 @@ ext/Makefile
 ext/conftest.dSYM/
 ext/mkmf.log
 ext/glpk_wrapper.bundle
-ext/glpk_wrapper.o
+ext/*.o
+ext/*.so
 
 # Test Files
 test.lp

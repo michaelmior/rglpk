@@ -1,7 +1,5 @@
-here = File.expand_path(File.dirname(__FILE__))
-
-require here+'/helper'
-require here+'/test_basic'
-require here+'/test_problem_kind'
-require here+'/test_brief_example'
-require here+'/test_memory_leaks'
+require_relative 'helper'
+require_relative 'test_basic'
+require_relative 'test_problem_kind'
+require_relative 'test_brief_example'
+require_relative 'test_memory_leaks'
