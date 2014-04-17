@@ -65,8 +65,13 @@ module Rglpk
   class Problem
     attr_accessor :rows, :cols, :obj, :lp
 
-    def initialize
-      @lp = Glpk_wrapper.glp_create_prob
+    def initialize(prob = nil)
+      if prob.nil?
+        @lp = Glpk_wrapper.glp_create_prob
+      else
+        @lp = prob
+      end
+
       @obj = ObjectiveFunction.new(self)
       @rows = RowArray.new
       @cols = ColArray.new
@@ -445,6 +450,40 @@ module Rglpk
 
     def mip
       Glpk_wrapper.glp_mip_obj_val(@p.lp)
+    end
+  end
+
+  class Workspace
+    attr_reader :tran
+
+    def initialize
+      @tran = Glpk_wrapper.glp_mpl_alloc_wksp
+
+      ObjectSpace.define_finalizer(self, self.class.finalizer(@tran))
+    end
+
+    def read_model(filename)
+      mip = Problem.new(Glpk_wrapper.glp_create_prob)
+
+      ret = Glpk_wrapper.glp_mpl_read_model @tran, filename, 0
+      fail RuntimeError unless ret == 0
+
+      ret = Glpk_wrapper.glp_mpl_generate @tran, nil
+      fail RuntimeError unless ret == 0
+
+      Glpk_wrapper.glp_mpl_build_prob @tran, mip.lp
+
+      mip
+    end
+
+    def postsolve(prob)
+      Glpk_wrapper.glp_mpl_postsolve @tran, prob.lp, Glpk_wrapper::GLP_MIP
+    end
+
+    def self.finalizer(tran)
+      proc do
+        Glpk_wrapper.glp_mlp_free_wksp(tran)
+      end
     end
   end
 end
