@@ -8,6 +8,14 @@ module Rglpk
 
   TypeConstants = [GLP_FR, GLP_LO, GLP_UP, GLP_DB, GLP_FX]
 
+  def self.enable_output
+    Glpk_wrapper.glp_term_out Glpk_wrapper::GLP_ON
+  end
+
+  def self.disable_output
+    Glpk_wrapper.glp_term_out Glpk_wrapper::GLP_OFF
+  end
+
   class RowColArray
     include Enumerable
 
