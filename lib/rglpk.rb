@@ -1,4 +1,5 @@
 require 'glpk_wrapper'
+require 'tempfile'
 
 module Rglpk
   Glpk_wrapper.constants.each do |c|
@@ -485,7 +486,22 @@ module Rglpk
     end
 
     def postsolve(prob)
+      Rglpk.enable_output
+      orig_std_out = STDOUT.clone
+      file = Tempfile.new 'postsolve'
+      file.unlink
+      STDOUT.reopen(file)
+
       Glpk_wrapper.glp_mpl_postsolve @tran, prob.lp, Glpk_wrapper::GLP_MIP
+
+      STDOUT.reopen(orig_std_out)
+      Rglpk.disable_output
+
+      file.rewind
+      output = file.read.sub(/Model has been successfully processed\n$/, '')
+      file.close!
+
+      output
     end
 
     def self.finalizer(tran)
